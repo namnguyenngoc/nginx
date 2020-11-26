@@ -1,0 +1,18 @@
+nginx:
+  image: nginx:1.15.3-alpine
+  ports:
+    - "8788:8788"
+    - "443:443"
+  volumes:
+    - ./config/nginx:/etc/nginx/conf.d
+  links:
+    - api:api
+    - webapp:webapp
+api:
+  build: ../family-server
+  volumes:
+    - ../family-server:/usr/src/app1
+webapp:
+  build: ../family-dashboard
+  volumes:
+    - ../family-dashboard:/usr/src/app2
