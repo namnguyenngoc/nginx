@@ -1,7 +1,7 @@
 const express = require('express');
-
 const app = express();
 
+//Services
 app.get('/', (req,res) => {
   res.status(200).json({
     data: {
