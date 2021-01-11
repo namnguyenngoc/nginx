@@ -1,7 +1,7 @@
 nginx:
   image: nginx:1.15.3-alpine
   ports:
-    - "8788:8788"
+    - "80:8788"
     - "443:443"
   volumes:
     - ./config/nginx:/etc/nginx/conf.d
