@@ -7,11 +7,16 @@ nginx:
     - ./config/nginx:/etc/nginx/conf.d
   links:
     - api:api
+    # - files:files
     - webapp:webapp
 api:
   build: ../family-server
   volumes:
     - ../family-server:/usr/src/app1
+# files:
+#   build: ../family-server
+#   volumes:
+#     - ../family-server:/usr/src/app1
 webapp:
   build: ../family-dashboard
   volumes:
