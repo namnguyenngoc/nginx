@@ -1,23 +1,46 @@
-nginx:
-  image: nginx:1.15.3-alpine
-  ports:
-    - "80:8788"
-    - "443:443"
-  volumes:
-    - ./config/nginx:/etc/nginx/conf.d
-  links:
-    - api:api
-    # - files:files
-    - webapp:webapp
-api:
-  build: ../family-server
-  volumes:
-    - ../family-server:/usr/src/app1
-# files:
-#   build: ../family-server
-#   volumes:
-#     - ../family-server:/usr/src/app1
-webapp:
-  build: ../family-dashboard
-  volumes:
-    - ../family-dashboard:/usr/src/app2
+version: '3.5'
+services:
+  nginx:
+    image: nginx:1.15.3-alpine
+    ports:
+      - "81:8788"
+      - "443:443"
+    volumes:
+      - ./config/nginx:/etc/nginx/conf.d
+    # depends_on:
+    #   - api
+    links:
+      - api:api
+      # - files:files
+      - webapp:webapp
+      
+  api:
+    build: ../family-server
+    volumes:
+      - ../family-server:/usr/src/app1
+    # links:
+    #   - "postgresql:database"
+    environment:
+      - DB_HOST=postgresql
+      - DB_PORT=5707
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=8caf799b2f81e4ed7b51fd2b0bb1292fd8062fa2aae268ec54d6740710d41970
+      - POSTGRES_DB=family
+      - LANG=en_US.UTF-8
+      - ALLOW_PLAINTEXT_LISTENER=yes
+    depends_on:
+      - postgresql
+    networks:
+      - common_docker-db
+networks:
+  common_docker-db:
+    driver: bridge
+
+  # db-networks:
+  #   db:
+  #     external: true
+  #     name: db-network
+  # webapp:
+  #   build: ../family-dashboard
+  #   volumes:
+  #     - ../family-dashboard:/usr/src/app2
