@@ -1,25 +1,60 @@
 version: '3.5'
 services:
   nginx:
-    image: nginx:1.15.3-alpine
+    image: nginx
+    container_name: f_nginx
     ports:
       - "81:8788"
       - "443:443"
     volumes:
       - ./config/nginx:/etc/nginx/conf.d
-    # depends_on:
-    #   - api
     links:
       - api:api
-      # - files:files
       - webapp:webapp
-      
+      - postgresql:postgresql
+    deploy:
+      resources:
+        limits:
+          cpus: '0.30'
+          memory: '512M'
+  
+  postgresql:
+      image: postgres:10
+      command: -c 'maintenance_work_mem=512MB' -c 'shared_buffers=512MB' -c 'max_connections=550' -p 5707
+      restart: always
+      expose:
+        - "5707" # Publishes 5707 to other containers but NOT to host machine
+      ports:
+        - "5707:5707"
+      volumes:
+        - ./backup:/home
+        # - /mnt/e/Workspace/ttek/backup-database/backup:/backup
+      # networks:
+      #   - postgresql
+      environment:
+        - POSTGRES_USER=postgres
+        - POSTGRES_PASSWORD=8caf799b2f81e4ed7b51fd2b0bb1292fd8062fa2aae268ec54d6740710d41970
+        - POSTGRES_DB=family
+        - LANG=en_US.UTF-8
+      deploy:
+        resources:
+          limits:
+            cpus: '0.50'
+            memory: 1024M
+          reservations:
+            cpus: '0.25'
+            memory: 128M
+
   api:
     build: ../family-server
+    container_name: f_api
     volumes:
       - ../family-server:/usr/src/app1
-    # links:
-    #   - "postgresql:database"
+      - ../family-server/emails/HSBC:/usr/src/app1/emails/HSBC
+      - ../family-server/emails/VIB:/usr/src/app1/emails/VIB
+      - ../family-server/emails/SCBANK:/usr/src/app1/emails/SCBANK
+    links:
+      - "postgresql:database"
     environment:
       - DB_HOST=postgresql
       - DB_PORT=5707
@@ -30,17 +65,27 @@ services:
       - ALLOW_PLAINTEXT_LISTENER=yes
     depends_on:
       - postgresql
-    networks:
-      - common_docker-db
-networks:
-  common_docker-db:
-    driver: bridge
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+    # networks:
+    #   - db
 
-  # db-networks:
-  #   db:
-  #     external: true
-  #     name: db-network
-  # webapp:
-  #   build: ../family-dashboard
-  #   volumes:
-  #     - ../family-dashboard:/usr/src/app2
+  webapp:
+    build: ../family-dashboard
+    container_name: f_webapp
+    volumes:
+      - ../family-dashboard:/usr/src/app2
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 1024M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
