@@ -10,6 +10,7 @@ services:
       - ./config/nginx:/etc/nginx/conf.d
     links:
       - api:api
+      - workingapi:workingapi
       - webapp:webapp
       - postgresql:postgresql
     deploy:
@@ -46,7 +47,9 @@ services:
             memory: 128M
 
   api:
-    build: ../family-server
+    build:
+      context: ../family-server
+      shm_size: '512M'
     container_name: f_api
     volumes:
       - ../family-server:/usr/src/app1
@@ -65,6 +68,24 @@ services:
       - ALLOW_PLAINTEXT_LISTENER=yes
     depends_on:
       - postgresql
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+    # networks:
+    #   - db
+
+  workingapi:
+    build:
+      context: ../working-server
+      shm_size: '512M'
+    container_name: working_api
+    volumes:
+      - ../working-server:/usr/src/app1
     deploy:
       resources:
         limits:
