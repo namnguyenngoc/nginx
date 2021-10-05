@@ -5,6 +5,7 @@ services:
     container_name: f_nginx
     ports:
       - "81:8788"
+      - "82:8792"
       - "443:443"
     volumes:
       - ./config/nginx:/etc/nginx/conf.d
@@ -12,6 +13,7 @@ services:
       - api:api
       - workingapi:workingapi
       - webapp:webapp
+      - mobileapp:mobileapp
       - postgresql:postgresql
     deploy:
       resources:
@@ -102,6 +104,20 @@ services:
     container_name: f_webapp
     volumes:
       - ../family-dashboard:/usr/src/app2
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 1024M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+
+  mobileapp:
+    build: ../pizza_builder
+    container_name: f_mobileapp
+    volumes:
+      - ../pizza_builder:/usr/src/app2
     deploy:
       resources:
         limits:
