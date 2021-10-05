@@ -114,10 +114,10 @@ services:
           memory: 128M
 
   mobileapp:
-    build: ../pizza_builder
+    build: ../mobilewebapp
     container_name: f_mobileapp
     volumes:
-      - ../pizza_builder:/usr/src/app2
+      - ../mobilewebapp:/usr/src/app2
     deploy:
       resources:
         limits:
