@@ -2,22 +2,30 @@ nginx:
   image: nginx:1.15.3-alpine
   ports:
     - "80:8788"
+    - "81:9770"
     - "443:443"
+  restart: on-failure
   volumes:
     - ./config/nginx:/etc/nginx/conf.d
   links:
     - api:api
     # - files:files
     - webapp:webapp
+    - webappsale:webappsale
 api:
   build: ../family-server
+  restart: on-failure
   volumes:
     - ../family-server:/usr/src/app1
-# files:
-#   build: ../family-server
-#   volumes:
-#     - ../family-server:/usr/src/app1
+
+webappsale:
+  build: ../sale-dav-front-end
+  volumes:
+    - ./:/usr/src/app3
+  restart: on-failure
+
 webapp:
   build: ../family-dashboard
   volumes:
-    - ../family-dashboard:/usr/src/app2
+    - ./:/usr/src/app2
+  restart: on-failure
