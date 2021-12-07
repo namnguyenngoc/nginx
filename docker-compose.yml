@@ -3,6 +3,7 @@ nginx:
   ports:
     - "80:8788"
     - "443:443"
+  restart: on-failure
   volumes:
     - ./config/nginx:/etc/nginx/conf.d
   links:
@@ -11,6 +12,7 @@ nginx:
     - webapp:webapp
 api:
   build: ../family-server
+  restart: on-failure
   volumes:
     - ../family-server:/usr/src/app1
 # files:
@@ -20,4 +22,5 @@ api:
 webapp:
   build: ../family-dashboard
   volumes:
-    - ../family-dashboard:/usr/src/app2
+    - ./:/usr/src/app2
+  restart: on-failure
