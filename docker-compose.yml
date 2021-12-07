@@ -1,31 +1,128 @@
-nginx:
-  image: nginx:1.15.3-alpine
-  ports:
-    - "80:8788"
-    - "81:9770"
-    - "443:443"
-  restart: on-failure
-  volumes:
-    - ./config/nginx:/etc/nginx/conf.d
-  links:
-    - api:api
-    # - files:files
-    - webapp:webapp
-    - webappsale:webappsale
-api:
-  build: ../family-server
-  restart: on-failure
-  volumes:
-    - ../family-server:/usr/src/app1
+version: '3.5'
+services:
+  nginx:
+    image: nginx
+    container_name: f_nginx
+    ports:
+      - "81:8788"
+      - "82:8792"
+      - "443:443"
+    volumes:
+      - ./config/nginx:/etc/nginx/conf.d
+    links:
+      - api:api
+      - workingapi:workingapi
+      - webapp:webapp
+      - mobileapp:mobileapp
+      - postgresql:postgresql
+    deploy:
+      resources:
+        limits:
+          cpus: '0.30'
+          memory: '512M'
+  
+  postgresql:
+      image: postgres:10
+      command: -c 'maintenance_work_mem=512MB' -c 'shared_buffers=512MB' -c 'max_connections=550' -p 5707
+      restart: always
+      expose:
+        - "5707" # Publishes 5707 to other containers but NOT to host machine
+      ports:
+        - "5707:5707"
+      volumes:
+        - ./backup:/home
+        # - /mnt/e/Workspace/ttek/backup-database/backup:/backup
+      # networks:
+      #   - postgresql
+      environment:
+        - POSTGRES_USER=postgres
+        - POSTGRES_PASSWORD=8caf799b2f81e4ed7b51fd2b0bb1292fd8062fa2aae268ec54d6740710d41970
+        - POSTGRES_DB=family
+        - LANG=en_US.UTF-8
+      deploy:
+        resources:
+          limits:
+            cpus: '0.50'
+            memory: 256M
+          reservations:
+            cpus: '0.25'
+            memory: 128M
 
-webappsale:
-  build: ../sale-dav-front-end
-  volumes:
-    - ./:/usr/src/app3
-  restart: on-failure
+  api:
+    build:
+      context: ../family-server
+      shm_size: '512M'
+    container_name: f_api
+    volumes:
+      - ../family-server:/usr/src/app1
+      - ../family-server/emails/HSBC:/usr/src/app1/emails/HSBC
+      - ../family-server/emails/VIB:/usr/src/app1/emails/VIB
+      - ../family-server/emails/SCBANK:/usr/src/app1/emails/SCBANK
+    links:
+      - "postgresql:database"
+    environment:
+      - DB_HOST=postgresql
+      - DB_PORT=5707
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=8caf799b2f81e4ed7b51fd2b0bb1292fd8062fa2aae268ec54d6740710d41970
+      - POSTGRES_DB=family
+      - LANG=en_US.UTF-8
+      - ALLOW_PLAINTEXT_LISTENER=yes
+    depends_on:
+      - postgresql
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 256M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+    # networks:
+    #   - db
 
-webapp:
-  build: ../family-dashboard
-  volumes:
-    - ./:/usr/src/app2
-  restart: on-failure
+  workingapi:
+    build:
+      context: ../working-server
+      shm_size: '512M'
+    container_name: working_api
+    volumes:
+      - ../working-server:/usr/src/app1
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 256M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+    # networks:
+    #   - db
+
+  webapp:
+    build: ../family-dashboard
+    container_name: f_webapp
+    volumes:
+      - ../family-dashboard:/usr/src/app2
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 1024M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+
+  mobileapp:
+    build: ../mobilewebapp
+    container_name: f_mobileapp
+    volumes:
+      - ../mobilewebapp:/usr/src/app2
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 1024M
+        reservations:
+          cpus: '0.25'
+          memory: 128M

@@ -1,0 +1,23 @@
+version: '3.5'
+services:
+  postgresql:
+      image: postgres:10
+      container_name: postgresql
+      command: -c 'maintenance_work_mem=512MB' -c 'shared_buffers=512MB' -c 'max_connections=550' -p 5707
+      restart: always
+      expose:
+        - "5707" # Publishes 5707 to other containers but NOT to host machine
+      ports:
+        - "5707:5707"
+      volumes:
+        - ./backup:/home
+      environment:
+        - POSTGRES_USER=postgres
+        - POSTGRES_PASSWORD=8caf799b2f81e4ed7b51fd2b0bb1292fd8062fa2aae268ec54d6740710d41970
+        - POSTGRES_DB=family
+        - LANG=en_US.UTF-8
+      networks:
+        - docker-db
+networks:
+  docker-db:
+    external: true

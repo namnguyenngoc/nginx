@@ -1,0 +1,1 @@
+ ALTER TABLE ONLY tra_gop add COLUMN phi_chuyen numeric DEFAULT 0;
