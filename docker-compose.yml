@@ -24,7 +24,6 @@ webappsale:
     - ./:/usr/src/app3
   restart: on-failure
 
-<<<<<<< HEAD
   workingapi:
     build:
       context: ../working-server
@@ -70,10 +69,3 @@ webappsale:
         reservations:
           cpus: '0.25'
           memory: 128M
-=======
-webapp:
-  build: ../family-dashboard
-  volumes:
-    - ./:/usr/src/app2
-  restart: on-failure
->>>>>>> 34579daa7ba64791552ae689b225bc73ac2ba702
