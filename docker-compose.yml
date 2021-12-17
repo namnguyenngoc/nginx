@@ -1,8 +1,8 @@
 nginx:
   image: nginx:1.15.3-alpine
   ports:
-    - "80:8788"
-    - "81:9770"
+    - "81:8788"
+    - "82:8792"
     - "443:443"
   restart: on-failure
   volumes:
@@ -10,6 +10,7 @@ nginx:
   links:
     - api:api
     # - files:files
+    - workingapi:workingapi
     - webapp:webapp
     - webappsale:webappsale
 api:
