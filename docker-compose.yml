@@ -53,6 +53,8 @@ services:
       context: ../family-server
       shm_size: '512M'
     container_name: f_api
+    ports:
+        - "8789:8789"
     volumes:
       - ../family-server:/usr/src/app1
       - ../family-server/emails/HSBC:/usr/src/app1/emails/HSBC
@@ -86,6 +88,8 @@ services:
       context: ../working-server
       shm_size: '512M'
     container_name: working_api
+    ports:
+        - "9789:9789"
     volumes:
       - ../working-server:/usr/src/app1
     deploy:
@@ -102,6 +106,8 @@ services:
   webapp:
     build: ../family-dashboard
     container_name: f_webapp
+    ports:
+        - "8790:8790"
     volumes:
       - ../family-dashboard:/usr/src/app2
     deploy:
@@ -116,6 +122,8 @@ services:
   mobileapp:
     build: ../mobilewebapp
     container_name: f_mobileapp
+    ports:
+        - "8792:8792"
     volumes:
       - ../mobilewebapp:/usr/src/app2
     deploy:
