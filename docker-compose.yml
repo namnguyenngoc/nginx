@@ -3,6 +3,7 @@ services:
   nginx:
     image: nginx
     container_name: f_nginx
+    restart: always
     ports:
       - "81:8788"
       - "82:8792"
@@ -53,6 +54,7 @@ services:
       context: ../family-server
       shm_size: '512M'
     container_name: f_api
+    restart: always
     ports:
         - "8789:8789"
     volumes:
@@ -88,6 +90,7 @@ services:
       context: ../working-server
       shm_size: '512M'
     container_name: working_api
+    restart: always
     ports:
         - "9789:9789"
     volumes:
@@ -106,6 +109,7 @@ services:
   webapp:
     build: ../family-dashboard
     container_name: f_webapp
+    restart: always
     ports:
         - "8790:8790"
     volumes:
@@ -122,6 +126,7 @@ services:
   mobileapp:
     build: ../mobilewebapp
     container_name: f_mobileapp
+    restart: always
     ports:
         - "8792:8792"
     volumes:
