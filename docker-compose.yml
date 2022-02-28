@@ -13,7 +13,7 @@ services:
     links:
       - api:api
       - workingapi:workingapi
-      - webapp:webapp
+      # - webapp:webapp
       - mobileapp:mobileapp
       - postgresql:postgresql
     deploy:
@@ -58,7 +58,7 @@ services:
     ports:
         - "8789:8789"
     volumes:
-      - ../family-server:/usr/src/app1
+      - ../family-server:/usr/src/f_api
       - ../family-server/emails/HSBC:/usr/src/app1/emails/HSBC
       - ../family-server/emails/VIB:/usr/src/app1/emails/VIB
       - ../family-server/emails/SCBANK:/usr/src/app1/emails/SCBANK
@@ -94,7 +94,7 @@ services:
     ports:
         - "9789:9789"
     volumes:
-      - ../working-server:/usr/src/app1
+      - ../working-server:/usr/src/f_working_api
     deploy:
       resources:
         limits:
@@ -106,22 +106,22 @@ services:
     # networks:
     #   - db
 
-  webapp:
-    build: ../family-dashboard
-    container_name: f_webapp
-    restart: always
-    ports:
-        - "8790:8790"
-    volumes:
-      - ../family-dashboard:/usr/src/app2
-    deploy:
-      resources:
-        limits:
-          cpus: '0.50'
-          memory: 1024M
-        reservations:
-          cpus: '0.25'
-          memory: 128M
+  # webapp:
+  #   build: ../family-dashboard
+  #   container_name: f_webapp
+  #   restart: always
+  #   ports:
+  #       - "8790:8790"
+  #   volumes:
+  #     - ../family-dashboard:/usr/src/f_webapp
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         cpus: '0.50'
+  #         memory: 1024M
+  #       reservations:
+  #         cpus: '0.25'
+  #         memory: 128M
 
   mobileapp:
     build: ../mobilewebapp
@@ -130,7 +130,7 @@ services:
     ports:
         - "8792:8792"
     volumes:
-      - ../mobilewebapp:/usr/src/app2
+      - ../mobilewebapp:/usr/src/f_mobileapp
     deploy:
       resources:
         limits:
