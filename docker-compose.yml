@@ -105,6 +105,26 @@ services:
           memory: 128M
     # networks:
     #   - db
+  websocket:
+    build:
+      context: ../family-websocket
+      shm_size: '512M'
+    container_name: f_websocket
+    restart: always
+    ports:
+        - "5789:5789"
+    volumes:
+      - ../family-websocket:/usr/src/f_websocket
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 256M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+    # networks:
+    #   - db
 
   # webapp:
   #   build: ../family-dashboard
@@ -139,3 +159,4 @@ services:
         reservations:
           cpus: '0.25'
           memory: 128M
+          
