@@ -12,7 +12,7 @@ services:
       - ./config/nginx:/etc/nginx/conf.d
     links:
       - api:api
-      - workingapi:workingapi
+      # - workingapi:workingapi
       # - webapp:webapp
       - mobileapp:mobileapp
       - postgresql:postgresql
@@ -84,25 +84,40 @@ services:
           memory: 128M
     # networks:
     #   - db
-
-  workingapi:
-    build:
-      context: ../working-server
-      shm_size: '512M'
-    container_name: working_api
+  mobileapp:
+    build: ../mobilewebapp
+    container_name: f_mobileapp
     restart: always
     ports:
-        - "9789:9789"
-    volumes:
-      - ../working-server:/usr/src/f_working_api
+        - "8792:8792"
+    # volumes:
+    #   - ../mobilewebapp:/usr/src/f_mobileapp
     deploy:
       resources:
         limits:
           cpus: '0.50'
-          memory: 256M
+          memory: 1024M
         reservations:
           cpus: '0.25'
           memory: 128M
+  # workingapi:
+  #   build:
+  #     context: ../working-server
+  #     shm_size: '512M'
+  #   container_name: working_api
+  #   restart: always
+  #   ports:
+  #       - "9789:9789"
+  #   volumes:
+  #     - ../working-server:/usr/src/f_working_api
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         cpus: '0.50'
+  #         memory: 256M
+  #       reservations:
+  #         cpus: '0.25'
+  #         memory: 128M
     # networks:
     #   - db
   # websocket:
@@ -142,21 +157,5 @@ services:
   #       reservations:
   #         cpus: '0.25'
   #         memory: 128M
-
-  mobileapp:
-    build: ../mobilewebapp
-    container_name: f_mobileapp
-    restart: always
-    ports:
-        - "8792:8792"
-    volumes:
-      - ../mobilewebapp:/usr/src/f_mobileapp
-    deploy:
-      resources:
-        limits:
-          cpus: '0.50'
-          memory: 1024M
-        reservations:
-          cpus: '0.25'
-          memory: 128M
+  
           
