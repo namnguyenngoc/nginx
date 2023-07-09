@@ -12,9 +12,9 @@ services:
       - ./config/nginx:/etc/nginx/conf.d
     links:
       - api:api
-      # - workingapi:workingapi
+      - workingapi:workingapi
       # - webapp:webapp
-      - mobileapp:mobileapp
+      # - mobileapp:mobileapp
       - postgresql:postgresql
     deploy:
       resources:
@@ -23,7 +23,7 @@ services:
           memory: '512M'
   
   postgresql:
-      image: postgres:10
+      image: postgres:14.5
       command: -c 'maintenance_work_mem=512MB' -c 'shared_buffers=512MB' -c 'max_connections=550' -p 5707
       restart: always
       expose:
@@ -65,11 +65,11 @@ services:
     links:
       - "postgresql:database"
     environment:
-      - DB_HOST=postgresql
-      - DB_PORT=5707
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=8caf799b2f81e4ed7b51fd2b0bb1292fd8062fa2aae268ec54d6740710d41970
-      - POSTGRES_DB=family
+      #- DB_HOST=postgresql (for docker)
+      # - DB_PORT=5707
+      # - POSTGRES_USER=postgres
+      # - POSTGRES_PASSWORD=8caf799b2f81e4ed7b51fd2b0bb1292fd8062fa2aae268ec54d6740710d41970
+      # - POSTGRES_DB=family
       - LANG=en_US.UTF-8
       - ALLOW_PLAINTEXT_LISTENER=yes
     depends_on:
@@ -84,40 +84,40 @@ services:
           memory: 128M
     # networks:
     #   - db
-  mobileapp:
-    build: ../mobilewebapp
-    container_name: f_mobileapp
-    restart: always
-    ports:
-        - "8792:8792"
-    # volumes:
-    #   - ../mobilewebapp:/usr/src/f_mobileapp
-    deploy:
-      resources:
-        limits:
-          cpus: '0.50'
-          memory: 1024M
-        reservations:
-          cpus: '0.25'
-          memory: 128M
-  # workingapi:
-  #   build:
-  #     context: ../working-server
-  #     shm_size: '512M'
-  #   container_name: working_api
+  # mobileapp:
+  #   build: ../mobilewebapp
+  #   container_name: f_mobileapp
   #   restart: always
   #   ports:
-  #       - "9789:9789"
-  #   volumes:
-  #     - ../working-server:/usr/src/f_working_api
+  #       - "8792:8792"
+  #   # volumes:
+  #   #   - ../mobilewebapp:/usr/src/f_mobileapp
   #   deploy:
   #     resources:
   #       limits:
   #         cpus: '0.50'
-  #         memory: 256M
+  #         memory: 1024M
   #       reservations:
   #         cpus: '0.25'
   #         memory: 128M
+  workingapi:
+    build:
+      context: ../working-server
+      shm_size: '512M'
+    container_name: working_api
+    restart: always
+    ports:
+        - "9789:9789"
+    volumes:
+      - ../working-server:/usr/src/f_working_api
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 256M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
     # networks:
     #   - db
   # websocket:

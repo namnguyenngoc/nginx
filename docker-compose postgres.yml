@@ -19,7 +19,7 @@ services:
           memory: '512M'
   
   postgresql:
-      image: postgres:10
+      image: postgres:14.5
       command: -c 'maintenance_work_mem=512MB' -c 'shared_buffers=512MB' -c 'max_connections=550' -p 5707
       restart: always
       expose:
