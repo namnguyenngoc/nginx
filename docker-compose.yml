@@ -110,6 +110,8 @@ services:
         - "9789:9789"
     volumes:
       - ../working-server:/usr/src/f_working_api
+    environment:
+        - PORT=9789
     deploy:
       resources:
         limits:
