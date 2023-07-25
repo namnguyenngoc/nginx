@@ -1,0 +1,15 @@
+
+
+
+//DUMP DB STG TO MY LOCAL Cyber2021
+pg_dump -h 10.0.68.203 -p 5432 -U us_fwd_dev -d us_fwd_stg -F c -b -v -f dump-us_fwd_stg-us_fwd_dev-20230721.dump
+pg_dump -h 127.0.0.1 -p 55432 -U us_fwd_dev  --clean
+
+//2023-15-06
+pg_restore -h 127.0.0.1 -p 55432 -U us_fwd_dev -d us_fwd_dev -v ./dump-us_fwd_stg-us_fwd_dev-20230721.dump --clean --if-exists
+
+psql -h 127.0.0.1 -p 55432 -U us_fwd_dev -d us_fwd_dev -f ./
+
+pg_restore -h 127.0.0.1 -p 55432 -U us_fwd_dev -d us_fwd_dev -W mydump.sql
+
+cat DC_us_fwd_stg_2023071716.sql | psql -h 127.0.0.1 -p 55432 -U us_fwd_dev
