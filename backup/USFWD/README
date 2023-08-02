@@ -2,8 +2,17 @@
 
 
 //DUMP DB STG TO MY LOCAL Cyber2021
+pg_dump -h 10.0.68.204 -p 5432 -U us_fwd_dev -d us_fwd_dev --exclude-table-data='cmm_task_task_seq_seq' -F c -b -v -f dump-us_fwd_dev-20230728.dump
 pg_dump -h 10.0.68.203 -p 5432 -U us_fwd_dev -d us_fwd_stg -F c -b -v -f dump-us_fwd_stg-us_fwd_dev-20230721.dump
+pg_dump -h 10.0.68.203 -p 5432 -U us_fwd_dev -d us_fwd_stg --exclude-table-data='cmm_task_task_seq_seq' -F c -b -v -f dump-us_fwd_stg-us_fwd_dev-20230727.dump
+pg_dump -h 10.0.68.203 -p 5432 -U us_fwd_dev -d us_fwd_test --exclude-table-data='*_seq' -F c -b -v -f dump-us_fwd_test-us_fwd_dev-20230801.dump
+pg_dump -h 10.0.68.203 -p 5432 -U us_fwd_dev -d us_fwd_test -F c -b -v -f dump-us_fwd_test-us_fwd_dev-20230801.dump
+
+
 pg_dump -h 127.0.0.1 -p 55432 -U us_fwd_dev  --clean
+
+pg_dump -h 10.0.68.203 -p 5432 -U us_fwd_dev -d us_fwd_test --exclude-table-data='*_seq' > db.sql
+--exclude-table-data='cmm_task_task_seq_seq'
 
 //2023-15-06
 pg_restore -h 127.0.0.1 -p 55432 -U us_fwd_dev -d us_fwd_dev -v ./dump-us_fwd_stg-us_fwd_dev-20230721.dump --clean --if-exists
@@ -13,3 +22,16 @@ psql -h 127.0.0.1 -p 55432 -U us_fwd_dev -d us_fwd_dev -f ./
 pg_restore -h 127.0.0.1 -p 55432 -U us_fwd_dev -d us_fwd_dev -W mydump.sql
 
 cat DC_us_fwd_stg_2023071716.sql | psql -h 127.0.0.1 -p 55432 -U us_fwd_dev
+
+//Restore Ao DB postgres/Cyber2023
+pg_restore -h 10.0.74.25 -p 54032 -U postgres -d us_fwd_dev -v --no-privileges --no-owner ./dump-us_fwd_dev-20230728.dump --clean --if-exists
+
+//Restore Hao DB postgres/1234
+pg_restore -h 10.0.73.173 -p 1402 -U postgres -d postgres -v  --no-privileges --no-owner ./dump-us_fwd_dev-20230728.dump --clean --if-exists
+
+//Restore Thai DB postgres/1234
+pg_restore -h 10.0.73.168 -p 54333 -U postgres -d postgres -v  --no-privileges --no-owner ./dump-us_fwd_dev-20230728.dump --clean --if-exists
+
+
+//Restore NAM DB postgres/1234
+ pg_restore -h 127.0.0.1 -p 55432 -U us_fwd_dev -d us_fwd_dev --no-privileges --no-owner -v ./dump-us_fwd_dev-20230801.dump --clean --if-exists
